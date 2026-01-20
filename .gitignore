@@ -1,0 +1,6 @@
+__pycache__/
+*.png
+*.jpg
+sd3.5/
+checkpoint-*/
+.DS_Store

@@ -1,0 +1,6 @@
+torch>=2.0.0
+diffusers>=0.30.0
+transformers
+accelerate
+numpy
+Pillow
