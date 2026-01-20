@@ -7,9 +7,6 @@ from diffusers.schedulers.scheduling_utils import SchedulerMixin
 from diffusers.configuration_utils import register_to_config, ConfigMixin
 from diffusers.pipelines.stable_diffusion_3.pipeline_output import StableDiffusion3PipelineOutput
 
-# ==========================================
-# 1. Enhanced Anderson Scheduler
-# ==========================================
 
 class AndersonEulerScheduler(SchedulerMixin, ConfigMixin):
     """
@@ -146,9 +143,7 @@ class AndersonEulerScheduler(SchedulerMixin, ConfigMixin):
         """
         return z_star + v_final * dt
 
-# ==========================================
-# 2. SD3.5 Anderson Pipeline
-# ==========================================
+
 
 class SD3AndersonPipeline(StableDiffusion3Pipeline):
     """
