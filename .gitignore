@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+outputs/
+FID_ImageNet_*/
+*.png
+*.jpg
+*.jpeg
+.DS_Store
+.ipynb_checkpoints/
