@@ -4,7 +4,7 @@ import numpy as np
 class AndersonFlowScheduler:
     """
     A scheduler implementing Flow Matching with Anderson Acceleration (AA).
-    This class handles the noise schedule, timestep alignment based on D2F, 
+    This class handles the noise schedule, timestep alignment based on D2F (Diffusion-to-Flow), 
     fixed-point iteration for position correction, and ODE stepping.
     """
 
@@ -32,7 +32,7 @@ class AndersonFlowScheduler:
     def _get_flow_matching_sigmas(self, num_steps, alphas_cumprod):
         """
         Aligns the inference sampling points with the training distribution by finding 
-        nearest neighbor indices in Flow-equivalent space.
+        nearest neighbor indices in Flow-equivalent space (D2F Alignment).
 
         Args:
             num_steps (`int`):
@@ -68,11 +68,7 @@ class AndersonFlowScheduler:
 
         Returns:
             `Dict[str, torch.Tensor]`:
-                A dictionary containing:
-                - **alpha_c**, **sigma_tc**, **scale_c**, **t_curr**: Params for current step.
-                - **t_next**, **scale_n**: Params for the next step.
-                - **dt**: Timestep increment.
-                - **t_index**: The integer timestep for model input.
+                A dictionary containing parameters for ODE stepping (alpha_c, sigma_tc, scale_c, etc.)
         """
         s_curr, s_next = self.sigmas_all[step_idx], self.sigmas_all[step_idx + 1]
         def get_single(sigma_val):
@@ -98,7 +94,7 @@ class AndersonFlowScheduler:
 
         Returns:
             `torch.Tensor`:
-                The calculated coefficients (weights) for each history step in the window.
+                The calculated coefficients (weights) for the history window.
         """
         B, M, D = residuals_stack.shape
         H = torch.bmm(residuals_stack, residuals_stack.transpose(1, 2))
@@ -110,14 +106,14 @@ class AndersonFlowScheduler:
         coeffs = alpha_unnorm / (alpha_unnorm.sum(dim=1, keepdim=True) + 1e-8)
         return coeffs.unsqueeze(-1).unsqueeze(-1)
 
-    def step_anderson_correction(self, model, latents, params, labels, null_labels, aa_steps, latent_c, m=1, use_aa=False):
+    def step_anderson_correction(self, model, latents, params, labels, null_labels, aa_steps, latent_c, m=1, use_aa=False, damping_beta=1.0):
         """
         Phase 1: Refines the latent position using fixed-point iteration (Picard) or 
         Anderson Acceleration to minimize trajectory error.
 
         Args:
             model (`nn.Module`):
-                The Transformer/U-Net model.
+                The Transformer model.
             latents (`torch.Tensor`):
                 The current latent tensor.
             params (`Dict`):
@@ -134,35 +130,64 @@ class AndersonFlowScheduler:
                 The history window size for Anderson Acceleration.
             use_aa (`bool`):
                 Whether to use Anderson Acceleration (True) or Picard iteration (False).
+            damping_beta (`float`):
+                The damping factor (relaxation factor). 1.0 means full AA update, 
+                lower values increase stability.
 
         Returns:
             `torch.Tensor`:
                 The corrected latent tensor.
         """
         bs = latents.shape[0]
-        G_list, F_list = [], []
+        G_list, F_list, X_list = [], [], []
         x_k = latents
         t_idx = params['t_index'].expand(bs)
+        
         for k in range(aa_steps):
+            # 1. Fixed-point operator g(x) calculation
             out_u = model(x_k, timestep=t_idx, class_labels=null_labels).sample
             if out_u.shape[1] // 2 == latent_c: out_u = out_u.chunk(2, dim=1)[0]
             x0_u = (x_k - params['sigma_tc'] * out_u) / params['alpha_c']
             v_u = (x0_u - params['scale_c'] * x_k) / (1.0 - params['t_curr'] + 1e-7)
             x_half = (params['scale_c'] * x_k - (params['dt'] / 2) * v_u) / params['scale_c']
+            
             out_c = model(x_half, timestep=t_idx, class_labels=labels).sample
             if out_c.shape[1] // 2 == latent_c: out_c = out_c.chunk(2, dim=1)[0]
             x0_c = (x_half - params['sigma_tc'] * out_c) / params['alpha_c']
             v_c = (x0_c - params['scale_c'] * x_half) / (1.0 - params['t_curr'] + 1e-7)
             g_k = (params['scale_c'] * x_half + (params['dt'] / 2) * v_c) / params['scale_c']
-            if not use_aa: x_k = g_k
+            
+            if not use_aa:
+                # Pure Picard Iteration (CFG-MP)
+                x_k = g_k
             else:
+                # Anderson Acceleration (CFG-MP+)
                 f_k = g_k - x_k
-                G_list.append(g_k); F_list.append(f_k.reshape(bs, -1))
-                if len(G_list) > (m + 1): G_list.pop(0); F_list.pop(0)
-                if k == 0: x_k = g_k
+                G_list.append(g_k)
+                F_list.append(f_k.reshape(bs, -1))
+                X_list.append(x_k)
+                
+                # Maintain Sliding Window
+                if len(G_list) > (m + 1):
+                    G_list.pop(0)
+                    F_list.pop(0)
+                    X_list.pop(0)
+                
+                if k == 0:
+                    x_k = g_k
                 else:
                     coeffs = self.solve_anderson_weights(torch.stack(F_list, dim=1))
-                    x_k = (coeffs * torch.stack(G_list, dim=1)).sum(dim=1)
+                    
+                    # Compute weighted averages
+                    sum_g = (coeffs * torch.stack(G_list, dim=1)).sum(dim=1)
+                    
+                    if damping_beta == 1.0:
+                        x_k = sum_g
+                    else:
+                        # Apply damping factor: (1-beta)*sum(alpha*x) + beta*sum(alpha*g)
+                        sum_x = (coeffs * torch.stack(X_list, dim=1)).sum(dim=1)
+                        x_k = (1.0 - damping_beta) * sum_x + damping_beta * sum_g
+                        
         return x_k
 
     def step_cfg_flow(self, model, latents, params, labels, null_labels, guidance_scale, latent_c, step_idx):
@@ -172,11 +197,11 @@ class AndersonFlowScheduler:
 
         Args:
             model (`nn.Module`):
-                The Transformer/U-Net model.
+                The Transformer model.
             latents (`torch.Tensor`):
                 Current latent tensor.
             params (`Dict`):
-                Step parameters from `get_step_params`.
+                Step parameters.
             labels (`torch.Tensor`):
                 Conditional class labels.
             null_labels (`torch.Tensor`):
@@ -186,7 +211,7 @@ class AndersonFlowScheduler:
             latent_c (`int`):
                 Number of latent channels.
             step_idx (`int`):
-                Current step index (used to decide between projection and incremental stepping).
+                Current step index.
 
         Returns:
             `torch.Tensor`:

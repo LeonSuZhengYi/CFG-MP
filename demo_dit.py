@@ -9,6 +9,7 @@ from PIL import Image
 from utils_dit import AndersonFlowScheduler
 
 def setup_distributed():
+    """Initializes the distributed process group and sets the CUDA device."""
     if not dist.is_initialized():
         dist.init_process_group("nccl")
     local_rank = int(os.environ["LOCAL_RANK"])
@@ -16,41 +17,46 @@ def setup_distributed():
     return local_rank, dist.get_world_size()
 
 def main():
-    # Config 
+    #  1. Generation Config 
     num_inference_steps = 10
     guidance_scale = 1.75
-    aa_correction_steps = 0 # to control the numbers of FPI
-    aa_window_size = 1  # to control the AA windowsize
-    enable_anderson = False  # to turn on or off the anderson acceleration for the FPI
-    time_threshold = 0.6 # to turn off the FPI correction in the last several steps
-
+    
+    # CFG-MP / CFG-MP+ Control
+    aa_correction_steps = 2  # Number of FPI iterations per step
+    aa_window_size = 1       # m: History window for Anderson Acceleration
+    aa_damping = 1.0         # beta: 1.0 means no damping, < 1.0 for more stability
+    enable_anderson = True   # True for CFG-MP+, False for CFG-MP (Picard)
+    time_threshold = 0.6     # Turn off correction in late sampling stages
+    
     batch_size = 40
     output_dir = "demo_output"
-    model_path = "DiT-XL-2-256"
+    model_path = "DiT-XL-2-256" # Use local path if necessary
     
     local_rank, world_size = setup_distributed()
     device = f"cuda:{local_rank}"
     is_main_process = local_rank == 0
 
-    # Setup Model and Scheduler 
+    #  2. Setup Model and Scheduler 
     pipe = DiTPipeline.from_pretrained(model_path, torch_dtype=torch.float32).to(device)
     scheduler = AndersonFlowScheduler(num_inference_steps=num_inference_steps)
     latent_c = pipe.transformer.config.in_channels
     latent_size = pipe.transformer.config.sample_size
     
-    # labels and seeds 
+    #  3. Task Allocation 
     all_labels = np.repeat(np.arange(1000), 1)
     all_seeds = np.arange(42, 42 + len(all_labels))
     my_labels = np.array_split(all_labels, world_size)[local_rank]
     my_seeds = np.array_split(all_seeds, world_size)[local_rank]
     
-    if is_main_process and not os.path.exists(output_dir): os.makedirs(output_dir)
+    if is_main_process and not os.path.exists(output_dir): 
+        os.makedirs(output_dir)
     dist.barrier()
 
     generator = torch.Generator(device="cpu")
 
+    #  4. Generation Loop 
     with torch.no_grad():
-        pbar = tqdm(total=len(my_labels), disable=not is_main_process)
+        pbar = tqdm(total=len(my_labels), desc=f"Rank {local_rank}", disable=not is_main_process)
         for i in range(0, len(my_labels), batch_size):
             b_labels, b_seeds = my_labels[i : i+batch_size], my_seeds[i : i+batch_size]
             curr_bs = len(b_labels)
@@ -65,29 +71,50 @@ def main():
             for step in range(num_inference_steps):
                 p = scheduler.get_step_params(step, device)
                 
-                # 1. manifold projection phase
+                #  Phase 1: Manifold Projection (Refinement) 
                 if aa_correction_steps > 0 and p['t_curr'] < time_threshold:
-                    
                     latents = scheduler.step_anderson_correction(
-                        pipe.transformer, latents, p, class_labels, null_labels, 
-                        aa_correction_steps, latent_c, aa_window_size, enable_anderson
+                        model=pipe.transformer, 
+                        latents=latents, 
+                        params=p, 
+                        labels=class_labels, 
+                        null_labels=null_labels, 
+                        aa_steps=aa_correction_steps, 
+                        latent_c=latent_c, 
+                        m=aa_window_size, 
+                        use_aa=enable_anderson,
+                        damping_beta=aa_damping 
                     )
                     
-                # 2. CFG sampling phase
+                #  Phase 2: CFG Sampling (ODE Stepping) 
                 latents = scheduler.step_cfg_flow(
-                    pipe.transformer, latents, p, class_labels, null_labels, 
-                    guidance_scale, latent_c, step
+                    model=pipe.transformer, 
+                    latents=latents, 
+                    params=p, 
+                    labels=class_labels, 
+                    null_labels=null_labels, 
+                    guidance_scale=guidance_scale, 
+                    latent_c=latent_c, 
+                    step_idx=step
                 )
 
-            # Final Decode 
-            decoded = pipe.vae.decode(latents / pipe.vae.config.scaling_factor, return_dict=False)[0]
+            #  5. Final Decode and Save 
+            latents_to_decode = latents / pipe.vae.config.scaling_factor
+            decoded = pipe.vae.decode(latents_to_decode, return_dict=False)[0]
             imgs = (decoded / 2 + 0.5).clamp(0, 1).permute(0, 2, 3, 1).cpu().numpy()
+            
             for j, img_arr in enumerate(imgs):
-                Image.fromarray((img_arr * 255).astype(np.uint8)).save(os.path.join(output_dir, f"img_{b_seeds[j]}.png"))
+                img_save_path = os.path.join(output_dir, f"img_{b_seeds[j]}.png")
+                Image.fromarray((img_arr * 255).astype(np.uint8)).save(img_save_path)
 
+            # Cleanup memory
             gc.collect()
             torch.cuda.empty_cache()
-            if is_main_process: pbar.update(curr_bs)
+            if is_main_process: 
+                pbar.update(curr_bs)
+
+    if is_main_process:
+        print(f"Generation complete. Images saved to {output_dir}")
 
 if __name__ == "__main__":
     main()
