@@ -6,7 +6,7 @@ from tqdm.auto import tqdm
 import torch.distributed as dist
 from diffusers import DiTPipeline
 from PIL import Image
-from utils_dit import AndersonFlowScheduler
+from utils_dit import CFGMPScheduler
 
 def setup_distributed():
     """Initializes the distributed process group and sets the CUDA device."""
@@ -38,7 +38,7 @@ def main():
 
     #  2. Setup Model and Scheduler 
     pipe = DiTPipeline.from_pretrained(model_path, torch_dtype=torch.float32).to(device)
-    scheduler = AndersonFlowScheduler(num_inference_steps=num_inference_steps)
+    scheduler = CFGMPSchedulerScheduler(num_inference_steps=num_inference_steps)
     latent_c = pipe.transformer.config.in_channels
     latent_size = pipe.transformer.config.sample_size
     

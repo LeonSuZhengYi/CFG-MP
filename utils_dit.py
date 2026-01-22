@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 
-class AndersonFlowScheduler:
+class CFGMPScheduler:
     """
     A scheduler implementing Flow Matching with Anderson Acceleration (AA).
     This class handles the noise schedule, timestep alignment based on D2F (Diffusion-to-Flow), 
