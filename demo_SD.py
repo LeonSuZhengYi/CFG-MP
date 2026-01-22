@@ -1,6 +1,6 @@
 import torch
 from PIL import Image
-from utils_SD import SD3AndersonPipeline, AndersonEulerScheduler
+from utils_SD import CFGMPSD3Pipeline, CFGMPScheduler
 
 def generate_sample(
     prompt: str,
@@ -24,8 +24,8 @@ def generate_sample(
     dtype = torch.bfloat16
 
     # 1. Initialize custom components
-    scheduler = AndersonEulerScheduler(num_train_timesteps=1000, shift=3.0)
-    pipe = SD3AndersonPipeline.from_pretrained(
+    scheduler = CFGMPScheduler(num_train_timesteps=1000, shift=3.0)
+    pipe = CFGMPSD3Pipeline.from_pretrained(
         model_path,
         scheduler=scheduler,
         torch_dtype=dtype

@@ -11,7 +11,7 @@ from diffusers.pipelines.stable_diffusion_3.pipeline_output import StableDiffusi
 # 1. Enhanced Anderson Scheduler
 # ==========================================
 
-class AndersonEulerScheduler(SchedulerMixin, ConfigMixin):
+class CFGMPScheduler(SchedulerMixin, ConfigMixin):
     """
     Custom scheduler implementing Anderson Acceleration (AA) for fixed-point 
     iterations, followed by a standard Euler stepping logic.
@@ -150,7 +150,7 @@ class AndersonEulerScheduler(SchedulerMixin, ConfigMixin):
 # 2. SD3.5 Anderson Pipeline
 # ==========================================
 
-class SD3AndersonPipeline(StableDiffusion3Pipeline):
+class CFGMPSD3Pipeline(StableDiffusion3Pipeline):
     """
     Inference pipeline for Stable Diffusion 3.5 utilizing Anderson Acceleration.
     """
