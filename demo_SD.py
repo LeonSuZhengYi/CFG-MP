@@ -9,7 +9,7 @@ def generate_sample(
     seed: int = 42
 ) -> Image.Image:
     """
-    Generates a single image using the Anderson-accelerated SD3.5 pipeline.
+    Generates a single image using the CFG-MP/MP+ SD3.5 pipeline.
 
     Args:
         prompt (str): The text prompt for image generation.
