@@ -5,7 +5,7 @@ class CFGMPScheduler:
     """
     A scheduler implementing CFG-MP/MP+ with DiT-XL-2-256.
     This class handles the noise schedule, timestep alignment based on D2F (Diffusion-to-Flow), 
-    fixed-point iteration for position correction, and ODE stepping.
+    fixed-point iteration for manifold projection, and ODE stepping.
     """
 
     def __init__(self, num_inference_steps=12, beta_start=0.0001, beta_end=0.02, num_train_timesteps=1000):
@@ -108,8 +108,8 @@ class CFGMPScheduler:
 
     def step_anderson_correction(self, model, latents, params, labels, null_labels, aa_steps, latent_c, m=1, use_aa=False, damping_beta=1.0):
         """
-        Phase 1: Refines the latent position using fixed-point iteration (Picard) or 
-        Anderson Acceleration to minimize trajectory error.
+        Phase 1: Implements the manifold projection using fixed-point iteration (Picard) or 
+        Anderson Acceleration to reduce the prediction gap.
 
         Args:
             model (`nn.Module`):
@@ -193,7 +193,7 @@ class CFGMPScheduler:
     def step_cfg_flow(self, model, latents, params, labels, null_labels, guidance_scale, latent_c, step_idx):
         """
         Phase 2: Performs Classifier-Free Guidance (CFG) and updates the latent using 
-        the Flow Matching stepping logic.
+        the CFG stepping logic.
 
         Args:
             model (`nn.Module`):
