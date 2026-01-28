@@ -2,7 +2,7 @@
 
 This repository contains the official implementation of **CFG-MP** (Manifold Projection) and **CFG-MP+** (Anderson-Accelerated Manifold Projection), as described in our ICML 2026 submission. 
 
-Our method introduces a **incremental gradient descent scheme**, which is also a **fixed-point iteration**, to ensure latents to have small prediction gap during Classifier-Free Guidance (CFG), significantly improving generation fidelity and convergence efficiency.
+Our method introduces an **incremental gradient descent scheme**, which is also a **fixed-point iteration**, to ensure latents to have small prediction gap during Classifier-Free Guidance (CFG), significantly improving generation fidelity and convergence efficiency.
 
 ---
 
@@ -54,9 +54,9 @@ The following parameters in demo_SD.py control the fixed-point iteration and acc
 ### Core Logic in `utils_SD.py`
 - `CFGMPScheduler`: Extends the `SchedulerMixin` to implement a custom noise schedule and the Anderson mixing solver. It solves the constrained least-squares problem to find the optimal extrapolation of previous latent states.
 
-- `CFGMPSD3Pipeline`: A specialized pipeline for SD3.5 that overrides the denoising loop. It implements the `iterate_fixed_point` method, which reduces the prediction gap and improve the velocity estimation accuracy in the CFG sampling process.
-### Manifold Projection Phase
-The pipeline applies a switching logic: for timesteps above the `switching_threshold`, it performs fixed-point iterations using "G"  to project latents onto the manifold.
+- `CFGMPSD3Pipeline`: A specialized pipeline for SD3.5 that overrides the sampling loop.
+    - It implements the `iterate_fixed_point` method, which reduces the prediction gap and improve the velocity estimation accuracy in the CFG sampling process.
+    - It applies a switching logic: for timesteps above the `switching_threshold`, it performs fixed-point iterations using "G"  to project latents onto the manifold.
 
 ## 📄 License
 This project is licensed under the **MIT License**.
