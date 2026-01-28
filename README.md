@@ -54,8 +54,7 @@ The following parameters in demo_SD.py control the fixed-point iteration and acc
 ### Core Logic in `utils_SD.py`
 - `CFGMPScheduler`: Extends the `SchedulerMixin` to implement a custom noise schedule and the Anderson mixing solver. It solves the constrained least-squares problem to find the optimal extrapolation of previous latent states.
 
-- `CFGMPSD3Pipeline`: A specialized pipeline for SD3.5 that overrides the denoising loop. It implements the `iterate_fixed_point` method, which alternates between conditional and unconditional velocity predictions to refine the latent position.
-
+- `CFGMPSD3Pipeline`: A specialized pipeline for SD3.5 that overrides the denoising loop. It implements the `iterate_fixed_point` method, which reduces the prediction gap and improve the velocity estimation accuracy in the CFG sampling process.
 ### Manifold Projection Phase
 The pipeline applies a switching logic: for timesteps above the `switching_threshold`, it performs fixed-point iterations using "G"  to project latents onto the manifold.
 
