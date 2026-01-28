@@ -61,5 +61,5 @@ if __name__ == "__main__":
     else:
         img = output[0]
         
-    img.save("CFG-MP_output.png")
-    print("Successfully saved image as CFG-MP_output.png")
+    img.save("output.png")
+    print("Successfully saved image as output.png")
