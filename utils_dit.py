@@ -3,7 +3,7 @@ import numpy as np
 
 class CFGMPScheduler:
     """
-    A scheduler implementing Flow Matching with Anderson Acceleration (AA).
+    A scheduler implementing CFG-MP/MP+ with DiT-XL-2-256.
     This class handles the noise schedule, timestep alignment based on D2F (Diffusion-to-Flow), 
     fixed-point iteration for position correction, and ODE stepping.
     """
