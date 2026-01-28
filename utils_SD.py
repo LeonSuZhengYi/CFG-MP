@@ -10,11 +10,8 @@ from diffusers.pipelines.stable_diffusion_3.pipeline_output import StableDiffusi
 
 class CFGMPScheduler(SchedulerMixin, ConfigMixin):
     """
-    Custom scheduler implementing Anderson Acceleration (AA) for fixed-point 
-    iterations, followed by a standard Euler stepping logic.
-
-    The scheduler maps noise levels (sigmas) and provides a specialized 
-    solver to find the fixed point of diffusion operators more efficiently.
+    Various functions for implementing CFG-MP/MP+.
+    
     """
     _compatibles = []
     order = 1 
@@ -147,7 +144,7 @@ class CFGMPScheduler(SchedulerMixin, ConfigMixin):
 
 class CFGMPSD3Pipeline(StableDiffusion3Pipeline):
     """
-    Inference pipeline for Stable Diffusion 3.5 utilizing Anderson Acceleration.
+    Inference pipeline for Stable Diffusion 3.5 utilizing CFG-MP/MP+.
     """
     
     def _get_velocity(self, latents: torch.Tensor, t_val: float, hidden_states: torch.Tensor, pooled: torch.Tensor, joint_kwargs: Dict) -> torch.Tensor:
@@ -182,7 +179,7 @@ class CFGMPSD3Pipeline(StableDiffusion3Pipeline):
         op_type: str = "G"
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         """
-        Evaluates the diffusion operator and applies Anderson Mixing.
+        Evaluates the manifold projection operator G and applies Anderson Mixing.
 
         Args:
             z_k (`torch.Tensor`): Current latent iteration.
@@ -197,7 +194,7 @@ class CFGMPSD3Pipeline(StableDiffusion3Pipeline):
         """
         dt_half = t_mid - t_curr
 
-        # 1. Operator Evaluation: Compute g(z_k)
+        # 1. Operator Evaluation: Compute G(z_k)
         if op_type == "H":
             v_cond = self._get_velocity(z_k, t_curr, p_embeds, p_pooled, joint_kwargs)
             z_temp = z_k + v_cond * dt_half
@@ -260,14 +257,14 @@ class CFGMPSD3Pipeline(StableDiffusion3Pipeline):
             p_embeds.dtype, device, kwargs.get("generator"), None
         )
         self.scheduler.set_timesteps(num_inference_steps, device=device)
-
-        # 3. Denoising Loop
+        
+        # 3. Sampling Loop 
         with self.progress_bar(total=num_inference_steps) as progress_bar:
             for i in range(num_inference_steps):
                 t_curr, t_mid, t_next = self.scheduler.get_fine_grained_times(i)
                 dt_full = t_next - t_curr
                 
-                #  Anderson Acceleration Phase 
+                # 1. Manifold projection Phase 
                 if t_curr <= switching_threshold:
                     z_star = latents
                 else:
@@ -286,7 +283,7 @@ class CFGMPSD3Pipeline(StableDiffusion3Pipeline):
                             break
                     z_star = z_k
 
-                #  Euler Step 
+                # 2. Sampling Phase 
                 v_cond = self._get_velocity(z_star, t_curr, p_embeds, p_pooled, kwargs.get("joint_attention_kwargs"))
                 v_uncond = self._get_velocity(z_star, t_curr, n_embeds, n_pooled, kwargs.get("joint_attention_kwargs"))
                 v_final = v_uncond + guidance_scale * (v_cond - v_uncond)
