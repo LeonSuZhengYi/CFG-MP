@@ -51,7 +51,7 @@ The following parameters in demo_SD.py control the fixed-point iteration and acc
 | **guidance_scale** | 4 | Guidance scale for Classifier-Free Guidance. |
 
 ## 🔬 Implementation Details
-### Core Logic
+### Core Logic in `utils_SD.py`
 - `CFGMPScheduler`: Extends the `SchedulerMixin` to implement a custom noise schedule and the Anderson mixing solver. It solves the constrained least-squares problem to find the optimal extrapolation of previous latent states.
 
 - `CFGMPSD3Pipeline`: A specialized pipeline for SD3.5 that overrides the denoising loop. It implements the `iterate_fixed_point` method, which alternates between conditional and unconditional velocity predictions to refine the latent position.
