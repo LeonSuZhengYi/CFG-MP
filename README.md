@@ -57,7 +57,7 @@ The following parameters in `demo_dit.py` control the refinement phase and Ander
 
 - Two-Phase Sampling Scheme
 Each denoising step is divided into two phases:
-    - Phase 1: Manifold Projection: Uses `step_anderson_correction` to refine the latent position through fixed-point iterations.
+    - Phase 1: Manifold Projection: Uses `step_anderson_correction` to reduce the prediction gap and thus refine the latent position through fixed-point iterations.
     - Phase 2: ODE Stepping: Uses `step_cfg_flow `to perform the standard CFG update and advance to the next timestep.
 
 ## 📄 License
