@@ -71,7 +71,7 @@ def main():
             for step in range(num_inference_steps):
                 p = scheduler.get_step_params(step, device)
                 
-                #  Phase 1: Manifold Projection (Refinement) 
+                #  Phase 1: Manifold Projection 
                 if aa_correction_steps > 0 and p['t_curr'] < time_threshold:
                     latents = scheduler.step_anderson_correction(
                         model=pipe.transformer, 
@@ -86,7 +86,7 @@ def main():
                         damping_beta=aa_damping 
                     )
                     
-                #  Phase 2: CFG Sampling (ODE Stepping) 
+                #  Phase 2: CFG Sampling 
                 latents = scheduler.step_cfg_flow(
                     model=pipe.transformer, 
                     latents=latents, 
