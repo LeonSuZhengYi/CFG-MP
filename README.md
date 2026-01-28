@@ -55,8 +55,7 @@ The following parameters in `demo_dit.py` control the refinement phase and Ander
 
 - `solve_anderson_weights`: Performs a regularized least-squares optimization to find optimal history coefficients.
 
-- Two-Phase Sampling Scheme
-Each denoising step is divided into two phases:
+- Two-Phase Sampling Scheme: Each sampling step is divided into two phases:
     - Phase 1: Manifold Projection: Uses `step_anderson_correction` to reduce the prediction gap and thus refine the latent position through fixed-point iterations.
     - Phase 2: ODE Stepping: Uses `step_cfg_flow `to perform the standard CFG update and advance to the next timestep.
 
