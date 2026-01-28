@@ -34,10 +34,6 @@ To generate a sample using the CFG-MP+ (Anderson Acceleration enabled) pipeline 
 ```Bash
 python demo_SD.py
 ```
-Reproducibility: The script uses a fixed `random seed (42)` to ensure the reproducibility of results presented in the paper.
-
-
-Output: The final output will be saved as `output.png.`
 
 ## ⚙️ Configuration & Hyperparameters
 The following parameters in demo_SD.py control the fixed-point iteration and acceleration logic:
