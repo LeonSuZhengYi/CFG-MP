@@ -81,7 +81,7 @@ The implementation of Manifold Projection and Anderson Acceleration is contained
 - CFG-MP_SD/utils_SD.py: Includes CFGMPSD3Pipeline and the switching logic for refinement.
 
 ### Two-Phase Sampling Scheme
-Each denoising step is divided into:
+Each sampling step is divided into:
 
 - Manifold Projection Phase: Refines the latent position through fixed-point iterations to minimize the prediction gap.
 
