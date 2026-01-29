@@ -59,7 +59,7 @@ While the core logic is shared, the parameter names differ slightly across the t
 | **aa_window_size** | 1 | History window size $m$. |
 | **aa_damping** | 1.0 | Damping factor $\beta$. |
 | **time_threshold** | 0.6 | Threshold to disable correction in late sampling stages to save compute. |
-| **guidance_scale** | 2 | Classifier-Free Guidance scale for DiT. |
+| **guidance_scale** | 2 | Guidance scale for DiT. |
 
 ### SD 3.5 Hyperparameters (`demo_SD.py`)
 | Parameter | Default | Description |
