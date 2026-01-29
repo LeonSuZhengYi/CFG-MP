@@ -53,7 +53,7 @@ def generate_sample(
 
 if __name__ == "__main__":
     MODEL_DIR = "sd3.5" # please change to the local model path.
-    PROMPT_TEXT = "A high-tech cyberpunk city street, neon lights, rainy weather, ultra-realistic."
+    PROMPT_TEXT = "A cute animal anime cat girl."
     
     output = generate_sample(PROMPT_TEXT, MODEL_DIR, use_aa=True)
     
