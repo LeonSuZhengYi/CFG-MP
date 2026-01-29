@@ -38,7 +38,7 @@ def main():
 
     #  2. Setup Model and Scheduler 
     pipe = DiTPipeline.from_pretrained(model_path, torch_dtype=torch.float32).to(device)
-    scheduler = CFGMPSchedulerScheduler(num_inference_steps=num_inference_steps)
+    scheduler = CFGMPScheduler(num_inference_steps=num_inference_steps)
     latent_c = pipe.transformer.config.in_channels
     latent_size = pipe.transformer.config.sample_size
     
