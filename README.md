@@ -19,7 +19,7 @@ The code is organized into two main projects:
 
 We recommend using **Miniconda** for environment management. Each project has its own specific dependencies.
 
-### For DiT Experiments
+### For DiT Generation
 ```bash
 cd CFG-MP_DiT
 conda create -n cfgmp-dit python=3.10 -y
@@ -27,7 +27,7 @@ conda activate cfgmp-dit
 pip install -r requirements.txt
 ```
 
-### For Stable Diffusion 3.5 Experiments
+### For Stable Diffusion 3.5 Generation
 ```bash
 cd CFG-MP_SD
 conda create -n cfgmp-sd python=3.10 -y
