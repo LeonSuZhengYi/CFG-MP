@@ -237,7 +237,7 @@ class CFGMPSD3Pipeline(StableDiffusion3Pipeline):
         aa_tol: float = 1e-6,
         aa_damping: float = 1.0,
         aa_ridge: float = 1e-4,
-        switching_threshold: float = 0.5, 
+        time_threshold: float = 0.6, 
         **kwargs,
     ):
         """
@@ -265,7 +265,7 @@ class CFGMPSD3Pipeline(StableDiffusion3Pipeline):
                 dt_full = t_next - t_curr
                 
                 # 1. Manifold projection Phase 
-                if t_curr <= switching_threshold:
+                if t_curr <= time_threshold:
                     z_star = latents
                 else:
                     z_k = latents.clone()
