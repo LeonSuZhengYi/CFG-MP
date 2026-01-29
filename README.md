@@ -1,4 +1,4 @@
-# CFG-MP & CFG-MP+: Manifold Projection for Diffusion Models
+# CFG-MP & CFG-MP+: Improving Classifier-Free Guidance of Flow Matching via Manifold Projection
 
 This repository contains the official implementation of **CFG-MP** (Manifold Projection) and **CFG-MP+** (Anderson-Accelerated Manifold Projection) for both **Diffusion Transformers (DiT)** and **Stable Diffusion 3.5 (SD3.5)**.
 
