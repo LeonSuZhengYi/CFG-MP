@@ -44,7 +44,7 @@ def generate_sample(
         use_aa=use_aa,
         max_aa_iter=3,
         aa_window_size=1,      
-        aa_damping=0.7, 
+        aa_damping=1, 
         time_threshold=0.6,
         generator=generator
     )
