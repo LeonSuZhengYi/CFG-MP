@@ -51,7 +51,7 @@ python demo_SD.py
 ## ⚙️ Configuration & Hyperparameters
 While the core logic is shared, the parameter names differ slightly across the two implementations to align with their respective codebases:
 
-### DiT Hyperparameters (`demo_dit.py`)
+### DiT-XL-2-256 Hyperparameters (`demo_dit.py`)
 | Parameter | Default | Description |
 | :--- | :--- | :--- |
 | **enable_anderson** | True | Whether to use Anderson Acceleration (CFG-MP+) or Picard iteration (CFG-MP). |
