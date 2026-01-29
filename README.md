@@ -19,7 +19,7 @@ The code is organized into two main projects:
 
 We recommend using **Miniconda** for environment management. Each project has its own specific dependencies.
 
-### For DiT Generation
+### For DiT-XL-2-256 Generation
 ```bash
 cd CFG-MP_DiT
 conda create -n cfgmp-dit python=3.10 -y
