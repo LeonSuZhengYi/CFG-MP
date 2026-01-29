@@ -1,4 +1,5 @@
 __pycache__/
+<<<<<<< HEAD
 *.pyc
 outputs/
 FID_ImageNet_*/
@@ -7,3 +8,10 @@ FID_ImageNet_*/
 *.jpeg
 .DS_Store
 .ipynb_checkpoints/
+=======
+*.png
+*.jpg
+sd3.5/
+checkpoint-*/
+.DS_Store
+>>>>>>> origin-sd/main
