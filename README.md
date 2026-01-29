@@ -85,7 +85,7 @@ Each sampling step is divided into:
 
 - Manifold Projection Phase: Refines the latent position through fixed-point iterations to minimize the prediction gap.
 
-- ODE Stepping Phase: Performs the standard CFG update to advance to the next timestep.
+- CFG Sampling Phase: Performs the standard CFG update to advance to the next timestep.
 
 ## 📄 License
 This project is licensed under the MIT License.
