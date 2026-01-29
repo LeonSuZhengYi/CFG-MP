@@ -55,7 +55,7 @@ While the core logic is shared, the parameter names differ slightly across the t
 | Parameter | Default | Description |
 | :--- | :--- | :--- |
 | **enable_anderson** | True | Whether to use Anderson Acceleration (CFG-MP+) or Picard iteration (CFG-MP). |
-| **aa_correction_steps** | 2 | Number of fixed-point iterations performed per sampling step. |
+| **aa_correction_steps** | 2 | Maximum fixed-point iterations per sampling step. |
 | **aa_window_size** | 1 | History window size $m$. |
 | **aa_damping** | 1.0 | Damping factor $\beta$. |
 | **time_threshold** | 0.6 | Threshold to disable correction in late sampling stages to save compute. |
@@ -64,12 +64,12 @@ While the core logic is shared, the parameter names differ slightly across the t
 ### SD 3.5 Hyperparameters (`demo_SD.py`)
 | Parameter | Default | Description |
 | :--- | :--- | :--- |
-| **use_aa** | True | Whether to enable Anderson Acceleration (CFG-MP or MP+). |
+| **use_aa** | True | Whether to use Anderson Acceleration (CFG-MP+) or Picard iteration (CFG-MP). |
 | **max_aa_iter** | 3 | Maximum fixed-point iterations per sampling step. |
 | **aa_window_size** | 1 | History window size $m$ . |
 | **aa_damping** | 1.0 | Damping factor $\beta$ . |
 | **time_threshold** | 0.6 | Threshold to disable correction in late sampling stages to save compute. |
-| **guidance_scale** | 4 | Guidance scale for Classifier-Free Guidance. |
+| **guidance_scale** | 4 | Guidance scale for SD3.5. |
 
 
 ## 🔬 Implementation Details
