@@ -10,7 +10,7 @@ Our method introduces an **incremental gradient descent scheme**, formulated as 
 
 The code is organized into two main projects:
 
-* **[`CFG-MP_DiT/`](./CFG-MP_DiT/)**: Implementation for DiT-XL-2-256 (ImageNet generation).
+* **[`CFG-MP_DiT/`](./CFG-MP_DiT/)**: Implementation for DiT-XL-2-256 (Large-scale Class-to-Image).
 * **[`CFG-MP_SD/`](./CFG-MP_SD/)**: Implementation for Stable Diffusion 3.5 (Large-scale Text-to-Image).
 
 ---
