@@ -67,7 +67,7 @@ While the core logic is shared, the parameter names differ slightly across the t
 | **use_aa** | True | Whether to enable Anderson Acceleration (CFG-MP or MP+). |
 | **max_aa_iter** | 3 | Maximum fixed-point iterations per sampling step. |
 | **aa_window_size** | 1 | History window size $m$ . |
-| **aa_damping** | 1 | Damping factor $\beta$ . |
+| **aa_damping** | 1.0 | Damping factor $\beta$ . |
 | **time_threshold** | 0.6 | Threshold to disable correction in late sampling stages to save compute. |
 | **guidance_scale** | 4 | Guidance scale for Classifier-Free Guidance. |
 
