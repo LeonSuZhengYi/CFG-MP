@@ -1,9 +1,10 @@
 # CFG-MP & CFG-MP+: Improving Classifier-Free Guidance of Flow Matching via Manifold Projection
 
-This repository contains the official implementation of **CFG-MP** (Manifold Projection) and **CFG-MP+** (Anderson-Accelerated Manifold Projection) for both **Diffusion Transformers (DiT)** and **Stable Diffusion 3.5 (SD3.5)**.
+This repository provides the official implementation of **CFG-MP (Manifold Projection)** and **CFG-MP+ (Anderson-Accelerated Manifold Projection)**, compatible with Diffusion Transformers (DiT) and Stable Diffusion 3.5 (SD3.5).
 
 Our method introduces an **incremental gradient descent scheme**, formulated as a **fixed-point iteration** (FPI), to minimize the prediction gap during Classifier-Free Guidance (CFG), and we further utilize **Anderson Acceleration** (AA) to speed up and stabilize this FPI. CFG-MP/MP+ can significantly enhancing generation fidelity and convergence efficiency.
 
+**Paper:** [Improving Classifier-Free Guidance of Flow Matching via Manifold Projection](http://arxiv.org/abs/2601.21892)
 ---
 
 ## 📂 Repository Structure
