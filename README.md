@@ -7,6 +7,8 @@ Our method introduces an **incremental gradient descent scheme**, formulated as 
 
 **Paper**: [Improving Classifier-Free Guidance of Flow Matching via Manifold Projection](http://arxiv.org/abs/2601.21892)
 
+We recommend this blog on [Moonlight](https://www.themoonlight.io/zh) for further reading: [[Literature Review] Improving Classifier-Free Guidance of Flow Matching via Manifold Projection](https://www.themoonlight.io/en/review/improving-classifier-free-guidance-of-flow-matching-via-manifold-projection) 
+
 ---
 
 ## 📂 Repository Structure
