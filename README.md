@@ -90,5 +90,17 @@ Each sampling step is divided into:
 
 - CFG Sampling Phase: Performs the standard CFG update to advance to the next timestep.
 
-## 📄 License
-This project is licensed under the MIT License.
+## Citation
+
+If you find this work helpful for your research, please consider citing:
+
+```bibtex
+@misc{cai2026improvingclassifierfreeguidanceflow,
+      title={Improving Classifier-Free Guidance of Flow Matching via Manifold Projection}, 
+      author={Jian-Feng Cai and Haixia Liu and Zhengyi Su and Chao Wang},
+      year={2026},
+      eprint={2601.21892},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={[https://arxiv.org/abs/2601.21892](https://arxiv.org/abs/2601.21892)}, 
+}
