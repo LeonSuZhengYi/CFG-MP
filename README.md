@@ -1,15 +1,40 @@
 # CFG-MP & CFG-MP+: Improving Classifier-Free Guidance of Flow Matching via Manifold Projection
 
-This repository provides the official implementation of **CFG-MP (Manifold Projection)** and **CFG-MP+ (Anderson-Accelerated Manifold Projection)**, compatible with Diffusion Transformers (DiT) and Stable Diffusion 3.5 (SD3.5).
+<p align="center">
+  <a href="https://arxiv.org/abs/2601.21892">
+    <img src="https://img.shields.io/badge/arXiv-2601.21892-b31b1b.svg">
+  </a>
+  <a href="https://icml.cc/">
+    <img src="https://img.shields.io/badge/ICML-2026-blue.svg">
+  </a>
+</p>
 
-Our method introduces an **incremental gradient descent scheme**, formulated as a **fixed-point iteration** (FPI), to minimize the prediction gap during Classifier-Free Guidance (CFG), and we further utilize **Anderson Acceleration** (AA) to speed up and stabilize this FPI. CFG-MP/MP+ can significantly enhancing generation fidelity and convergence efficiency.
+This repository provides the official implementation of **CFG-MP** and **CFG-MP+** for the paper:
 
+> **Improving Classifier-Free Guidance of Flow Matching via Manifold Projection**  
+> Jian-Feng Cai, Haixia Liu, Zhengyi Su, Chao Wang  
+> Accepted to **ICML 2026**
 
-**Paper**: [Improving Classifier-Free Guidance of Flow Matching via Manifold Projection](http://arxiv.org/abs/2601.21892)
-
-We recommend this blog on [Moonlight](https://www.themoonlight.io/zh) for further reading: [[Literature Review] Improving Classifier-Free Guidance of Flow Matching via Manifold Projection](https://www.themoonlight.io/en/review/improving-classifier-free-guidance-of-flow-matching-via-manifold-projection) 
+**Paper**: [arXiv:2601.21892](https://arxiv.org/abs/2601.21892)
 
 ---
+
+## Overview
+
+Classifier-Free Guidance (CFG) is a widely used technique for improving conditional generation in diffusion and flow-based generative models. However, the standard linear extrapolation form of CFG may introduce a prediction gap, especially under large guidance scales.
+
+We propose **CFG-MP (Manifold Projection)**, a training-free refinement method that formulates the correction of CFG as an **incremental gradient descent scheme** and solves it through a **fixed-point iteration**. To further improve stability and efficiency, we introduce **CFG-MP+**, which incorporates **Anderson Acceleration** into the fixed-point iteration.
+
+CFG-MP/CFG-MP+ can improve generation fidelity and convergence efficiency, and are compatible with large-scale generative models, including:
+
+- **DiT-XL-2-256** for class-to-image generation;
+- **Stable Diffusion 3.5** for text-to-image generation.
+
+For an accessible summary of the paper, we also recommend this third-party review on Moonlight:  
+[[Literature Review] Improving Classifier-Free Guidance of Flow Matching via Manifold Projection](https://www.themoonlight.io/en/review/improving-classifier-free-guidance-of-flow-matching-via-manifold-projection)
+
+---
+
 
 ## 📂 Repository Structure
 
