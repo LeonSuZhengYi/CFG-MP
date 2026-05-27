@@ -122,12 +122,14 @@ Each sampling step is divided into:
 If you find this work helpful for your research, please consider citing:
 
 ```bibtex
-@misc{cai2026improvingclassifierfreeguidanceflow,
-      title={Improving Classifier-Free Guidance of Flow Matching via Manifold Projection}, 
-      author={Jian-Feng Cai and Haixia Liu and Zhengyi Su and Chao Wang},
-      year={2026},
-      eprint={2601.21892},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV},
-      url={[https://arxiv.org/abs/2601.21892](https://arxiv.org/abs/2601.21892)}, 
+@inproceedings{cai2026improvingclassifierfreeguidanceflow,
+  title     = {Improving Classifier-Free Guidance of Flow Matching via Manifold Projection},
+  author    = {Cai, Jian-Feng and Liu, Haixia and Su, Zhengyi and Wang, Chao},
+  booktitle = {Proceedings of the 43rd International Conference on Machine Learning},
+  year      = {2026},
+  note      = {Accepted at ICML 2026},
+  eprint    = {2601.21892},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  url       = {https://arxiv.org/abs/2601.21892}
 }
